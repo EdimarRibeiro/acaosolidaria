@@ -1,7 +1,6 @@
 const Usuario       = require('../models').usuario;
-const Entidade      = require('../models').entidade;
-const Entidadeusuario = require('../models').entidadeusuario;
 const authService   = require('./../services/authService');
+const Entidadeusuario = require('../models').entidadeusuario;
 
 const create = async function(req, res){
     res.setHeader('Content-Type', 'application/json');
@@ -14,43 +13,42 @@ const create = async function(req, res){
     }else{
         let err, usuario;
 
+        console.log('1');
         [err, usuario] = await to(authService.createusuario(body));
+
+        console.log('2');
 
         if(err) 
            return ReE(res, err, 422);
 
-        if (!body.identidade){
-            let errs, entidade,entidadeusuario;
-            entidadeusuariotmp = Entidadeusuario;
+        console.log('3');
+        [err, usuario] = await to(usuario.save());
 
-            [errs, entidade] = await to(Entidade.create(body));
+        console.log('4');
 
-            if(errs) 
-               return ReE(res, errs, 422);
-          
-            entidadeusuariotmp.identidade = entidade.identidade;
-            entidadeusuariotmp.idusuario  = usuario.idusuario;
-            entidadeusuariotmp.ativo      = 1;
+        if(err) 
+           return ReE(res, err, 422);    
+           
+           console.log('5',usuario);
 
-            [errs, entidadeusuario] = await to(Entidadeusuario.create(entidadeusuariotmp));
+        if (usuario){       
+            console.log('6');     
+           let errs, entidadeusuario, entidadeusuariotmp;
+           entidadeusuariotmp = {identidade:'',idusuario:'',ativo:''};
+           
+           entidadeusuariotmp.identidade = usuario.identidade;
+           entidadeusuariotmp.idusuario  = usuario.idusuario;
+           entidadeusuariotmp.ativo      = 1;
 
-            if(errs)
-               return ReE(res, errs, 422);
-        }
-        else
-        {
-           let  errs,entidadeusuario, entidadeusuariotmp;
-
-           console.log( usuario.idusuario,body.identidade);
-
-           entidadeusuariotmp = Entidadeusuario;
-           entidadeusuariotmp.identidade = body.identidade;
-           entidadeusuariotmp.idusuario = usuario.idusuario;
-
+           console.log(usuario,entidadeusuario);
+   
            [errs, entidadeusuario] = await to(Entidadeusuario.create(entidadeusuariotmp));
-           if(errs) 
-              return ReE(res, errs, 422);
-        }             
+   
+           if(errs)
+              return ReE(res, errs, 422);   
+        }
+
+        console.log('7');
 
         return ReS(res, {message:'Successfully created new usuario.', usuario:usuario.toWeb(), token:usuario.getJWT()}, 201);
     }
@@ -60,17 +58,22 @@ module.exports.create = create;
 const get = async function(req, res){
     res.setHeader('Content-Type', 'application/json');
     let err, usuarios;
-    let idusuario =req.params.idusuario;
+    let identidade =req.params.identidade;
 
-    if (!idusuario)
-      idusuario = req.user.idusuario;
-
-    [err, usuarios] = await to(Usuario.findOne({where:{idusuario:idusuario}}));
+    [err, usuarios] = await to(Usuario.findAll({where:{identidade:identidade}}));
 
     if(err) 
       return ReE(res, err, 422);
 
-    return ReS(res, {usuario:usuarios.toWeb()});
+    let usuarios_json =[]
+    for( let i in usuarios){
+        let usuario = usuarios[i];
+        let usuario_info = usuario.toWeb();
+          
+        usuarios_json.push(usuario_info);
+    }
+
+    return ReS(res, {usuario:usuarios_json});
 }
 module.exports.get = get;
 

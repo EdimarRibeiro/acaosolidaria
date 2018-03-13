@@ -14,13 +14,14 @@ const custom            = require('./../middleware/custom');
 const passport          = require('passport');
 const path              = require('path');
 
-router.post(  '/usuario', usuarioController.create); //create                                               
+router.post(  '/usuario',passport.authenticate('jwt', {session:false}), usuarioController.create); //create                                               
 router.get(   '/usuario',passport.authenticate('jwt', {session:false}), usuarioController.get);  //read     
-router.put(   '/usuario/:idusuario',passport.authenticate('jwt', {session:false}), usuarioController.update); //update   
-router.delete('/usuario/:idusuario',passport.authenticate('jwt',{session:false}), usuarioController.remove); //delete
+router.get(   '/usuario/:identidade',passport.authenticate('jwt', {session:false}), usuarioController.get);  //read    
+router.put(   '/usuario/:idusuario' ,passport.authenticate('jwt', {session:false}), usuarioController.update); //update   
+router.delete('/usuario/:idusuario' ,passport.authenticate('jwt', {session:false}), usuarioController.remove); //delete
 router.post(  '/usuario/login', usuarioController.login);
 
-router.post(  '/entidade', passport.authenticate('jwt', {session:false}), entidadeController.create);
+router.post(  '/entidade', entidadeController.create);
 router.get(   '/entidade', passport.authenticate('jwt', {session:false}), entidadeController.getAll);
 //Incluir dados no json
 //router.get(   '/entidade/:identidade', passport.authenticate('jwt', {session:false}), entidadeController.get);

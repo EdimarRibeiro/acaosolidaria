@@ -1,4 +1,6 @@
 const Entidade = require('../models').entidade;
+const Usuario  = require('../models').usuario;
+const Entidadeusuario = require('../models').entidadeusuario;
 
 const create = async function(req, res){
     res.setHeader('Content-Type', 'application/json');
@@ -13,7 +15,37 @@ const create = async function(req, res){
     [err, entidade] = await to(entidade.save());
 
     if(err) 
-      return ReE(res, err, 422);
+       return ReE(res, err, 422);
+
+
+    if (entidade.identidade){        
+        let errs, usuario, tmpusuario;
+        tmpusuario = {identidade:'',nome:'',email:'',senha:''};
+
+        tmpusuario.identidade = entidade.identidade; 
+        tmpusuario.nome       = entidade_info.nome;
+        tmpusuario.email      = entidade_info.email;
+        tmpusuario.senha      = entidade_info.senha;
+
+        [errs, usuario] = await to(Usuario.create(tmpusuario));
+
+        if(errs) 
+           return ReE(res, errs, 422);
+        
+        if (usuario){    
+            let errs, entidadeusuario, entidadeusuariotmp;
+           entidadeusuariotmp = {identidade:'',idusuario:'',ativo:''};
+           
+           entidadeusuariotmp.identidade = usuario.identidade;
+           entidadeusuariotmp.idusuario  = usuario.idusuario;
+           entidadeusuariotmp.ativo      = 1;
+   
+           [errs, entidadeusuario] = await to(Entidadeusuario.create(entidadeusuariotmp));
+   
+           if(errs)
+              return ReE(res, errs, 422);   
+        }
+    }
    
     return ReS(res,{entidade:entidade.toWeb()}, 201);
 }

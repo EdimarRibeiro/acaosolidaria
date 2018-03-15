@@ -8,8 +8,6 @@ const create = async function(req, res){
     let beneficiario_info = req.body;
     let idusuario = req.user.idusuario;
 
-    console.log(idusuario,entidadeusuario);
-
     [err, beneficiario] = await to(Beneficiario.create(beneficiario_info));
     if(err) return ReE(res, err, 422);
 
@@ -17,8 +15,6 @@ const create = async function(req, res){
     if(err) return ReE(res, err, 422);
 
     [err, entidadeusuario] = await to(Entidadeusuario.findOne({where:{idusuario:idusuario}}));
-
-    console.log(idusuario,entidadeusuario);
 
     if (entidadeusuario) {
         entidadebeneficiariotmp = Entidadebeneficiario;

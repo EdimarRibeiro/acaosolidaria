@@ -12,35 +12,23 @@ const create = async function(req, res){
         return ReE(res, 'Informar uma Senha para registrar.');
     }else{
         let err, usuario;
-
-        console.log('1');
         [err, usuario] = await to(authService.createusuario(body));
-
-        console.log('2');
 
         if(err) 
            return ReE(res, err, 422);
 
-        console.log('3');
         [err, usuario] = await to(usuario.save());
-
-        console.log('4');
 
         if(err) 
            return ReE(res, err, 422);    
-           
-           console.log('5',usuario);
 
-        if (usuario){       
-            console.log('6');     
-           let errs, entidadeusuario, entidadeusuariotmp;
+        if (usuario){    
+            let errs, entidadeusuario, entidadeusuariotmp;
            entidadeusuariotmp = {identidade:'',idusuario:'',ativo:''};
            
            entidadeusuariotmp.identidade = usuario.identidade;
            entidadeusuariotmp.idusuario  = usuario.idusuario;
            entidadeusuariotmp.ativo      = 1;
-
-           console.log(usuario,entidadeusuario);
    
            [errs, entidadeusuario] = await to(Entidadeusuario.create(entidadeusuariotmp));
    
@@ -48,14 +36,27 @@ const create = async function(req, res){
               return ReE(res, errs, 422);   
         }
 
-        console.log('7');
-
         return ReS(res, {message:'Successfully created new usuario.', usuario:usuario.toWeb(), token:usuario.getJWT()}, 201);
     }
 }
 module.exports.create = create;
 
-const get = async function(req, res){
+const get = async function(req, res){  
+    res.setHeader('Content-Type', 'application/json');
+    let err, usuarios;
+    let idusuario  =req.params.idusuario;    
+
+    [err, usuarios] == await to(Usuario.findOne({where:{idusuario:idusuario}}));
+
+    if(err) 
+      return ReE(res, err, 422);
+
+    return ReS(res, {usuario:usuarios.toWeb()});
+}
+module.exports.get = get;
+
+
+const getAll = async function(req, res){
     res.setHeader('Content-Type', 'application/json');
     let err, usuarios;
     let identidade =req.params.identidade;
@@ -75,7 +76,7 @@ const get = async function(req, res){
 
     return ReS(res, {usuario:usuarios_json});
 }
-module.exports.get = get;
+module.exports.getAll = getAll;
 
 const update = async function(req, res){
     res.setHeader('Content-Type', 'application/json');

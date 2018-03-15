@@ -20,8 +20,9 @@ module.exports.create = create;
 const getAll = async function(req, res){
     res.setHeader('Content-Type', 'application/json');
     let err, entidadebeneficiarios;
+    let identidade =req.params.identidade;
 
-    [err, entidadebeneficiarios] = await to(Entidadebeneficiario.findAll());
+    [err, entidadebeneficiarios] = await to(Entidadebeneficiario.findAll({where:{identidade:identidade}}));
 
     let entidadebeneficiarios_json =[]
     for( let i in entidadebeneficiarios){

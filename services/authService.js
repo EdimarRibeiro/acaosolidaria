@@ -63,7 +63,7 @@ const authusuario = async function(usuarioInfo){//returns token
         auth_info.method='email';
     
         [err, usuario] = await to(Usuario.findOne({where:{email:unique_key}}));
-        console.log(err, usuario, unique_key);
+        
         if(err) TE(err.message);
     }else{
         TE('O email informado não é válido.');

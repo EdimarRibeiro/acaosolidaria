@@ -16,7 +16,8 @@ const path              = require('path');
 
 router.post(  '/usuario',passport.authenticate('jwt', {session:false}), usuarioController.create); //create                                               
 router.get(   '/usuario',passport.authenticate('jwt', {session:false}), usuarioController.get);  //read     
-router.get(   '/usuario/:identidade',passport.authenticate('jwt', {session:false}), usuarioController.get);  //read    
+router.get(   '/usuario/:identidade',passport.authenticate('jwt', {session:false}), usuarioController.getAll);  //read    
+router.get(   '/usuario/:identidade/:idusuario',passport.authenticate('jwt', {session:false}), usuarioController.get);  //read   
 router.put(   '/usuario/:idusuario' ,passport.authenticate('jwt', {session:false}), usuarioController.update); //update   
 router.delete('/usuario/:idusuario' ,passport.authenticate('jwt', {session:false}), usuarioController.remove); //delete
 router.post(  '/usuario/login', usuarioController.login);
@@ -51,8 +52,7 @@ router.put(   '/dependente/:iddependente', passport.authenticate('jwt', {session
 router.delete('/dependente/:iddependente', passport.authenticate('jwt', {session:false}),  dependenteController.remove);
 
 router.post(  '/entidadebeneficiario', passport.authenticate('jwt', {session:false}), entidadebeneficiarioController.create);
-router.get(   '/entidadebeneficiario', passport.authenticate('jwt', {session:false}), entidadebeneficiarioController.getAll);
-router.get(   '/entidadebeneficiario/:identidade', passport.authenticate('jwt', {session:false}),  entidadebeneficiarioController.get);
+router.get(   '/entidadebeneficiario/:identidade', passport.authenticate('jwt', {session:false}),  entidadebeneficiarioController.getAll);
 router.get(   '/entidadebeneficiario/:identidade/:idbeneficiario', passport.authenticate('jwt', {session:false}),  entidadebeneficiarioController.get);
 router.put(   '/entidadebeneficiario/:identidade/:idbeneficiario', passport.authenticate('jwt', {session:false}),  entidadebeneficiarioController.update);
 router.delete('/entidadebeneficiario/:identidade/:idbeneficiario', passport.authenticate('jwt', {session:false}),  entidadebeneficiarioController.remove);

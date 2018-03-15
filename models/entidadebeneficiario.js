@@ -7,6 +7,11 @@ module.exports = (sequelize, DataTypes) => {
     ativo: DataTypes.INTEGER,
 });
 
+Model.associate = function(models){
+  this.Beneficiarios = this.belongsToMany(models.beneficiario, {through: 'EntidadeBeneficiario'});
+};
+
+
 Model.prototype.toWeb = function (pw) {
     let json = this.toJSON();
     return json;
